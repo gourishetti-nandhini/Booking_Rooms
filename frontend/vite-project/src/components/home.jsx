@@ -10,7 +10,7 @@ const Home = () => {
   }
 
   useEffect(() => {
-     const url = "http://localhost:3000/hotel";
+     const url = `${import.meta.env.VITE_API_URL}/hotel`;
       const getData = async () => {
       const data = await fetch(url);
       const response = await data.json();

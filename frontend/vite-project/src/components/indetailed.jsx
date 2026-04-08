@@ -13,7 +13,7 @@ const Indetailed = () => {
   useEffect(() => {
     const gettingdata = async () => {
       try {
-        const data = await fetch(`http://localhost:3000/single-hotel/${id}`);
+        const data = await fetch(`${import.meta.env.VITE_API_URL}/single-hotel/${id}`);
         const response1 = await data.json();
         
         
@@ -38,7 +38,7 @@ const Indetailed = () => {
 
     try {
    
-      const response = await fetch("http://localhost:3000/book/", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/book`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(bookingDetails),
