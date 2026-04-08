@@ -5,11 +5,13 @@ const cors = require('cors')
 app.use(cors({
   origin: "http://localhost:5173"
 }));
-const {open}=require('sqlite')
-const sqlite3=require('sqlite3')
+// const {open}=require('sqlite')
+// const sqlite3=require('sqlite3')
 const path=require('path')
+const Database = require("better-sqlite3");
+let db = new Database("bookings.db");
 const dbpath=path.join(__dirname,"bookings.db")
-let db=null;
+// let db=null;
 const intializeserverdb=async()=>{
    try{
     db = await open({
@@ -35,8 +37,9 @@ const intializeserverdb=async()=>{
   FOREIGN KEY (hotel_id) REFERENCES Hotel (hotel_id)
 );
 `);
-    app.listen(3000,()=>{
-        console.log("SERVER STARTED")
+const PORT = process.env.PORT || 3000;
+    app.listen(PORT,()=>{
+        console.log(`Server running on port ${PORT}`);
     })
    }
    catch(error){
@@ -46,15 +49,21 @@ const intializeserverdb=async()=>{
 
 intializeserverdb();
 
+app.get("/", (req, res) => {
+  res.send("Backend Running");
+});
+
 app.get("/bookings/",async(request,response)=>{
  const query=`select * from Booking`;
- const data = await db.all(query);
+//  const data = await db.all(query);
+const data = db.prepare(query).all();
  response.send(data);
 })
 
 app.get("/hotel/",async(request,response)=>{
   const query=`select * from Hotel`;
-  const data = await db.all(query);
+  // const data = await db.all(query);
+  const data = db.prepare(query).all();
   response.send(data);
 })
 
@@ -69,7 +78,9 @@ app.post("/add-hotel",async(request,response)=>{
    ${price},
    ${rating}
   )`
-const data = await db.run(query)
+// const data = await db.run(query)
+const data = db.prepare(query).run();
+
 response.send(data)
 })
 
@@ -77,7 +88,8 @@ response.send(data)
 app.get("/single-hotel/:id",async(request,response)=>{
   const {id}=request.params;
   const query=`select * from Hotel where hotel_id=${id}`
-  const data = await db.all(query)
+  // const data = await db.all(query)
+  const data = db.prepare(query).all();
   response.send(data)
 })
 
